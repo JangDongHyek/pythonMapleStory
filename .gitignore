@@ -1,0 +1,3 @@
+res/log/*.bmp
+__pycache__/
+yolo/*.weights

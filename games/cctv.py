@@ -15,6 +15,7 @@ class CCTV(QThread) :
         lie_count = 0
         logCount = 0
         gameTimer = time.time()
+        serverTimver = time.time()
         while globals.main:
             try :
                 if not globals.minimap :
@@ -28,13 +29,51 @@ class CCTV(QThread) :
                     if (logCount > 100):
                         logCount = 0
 
-                    # 타이머
-                    if gsl.compareTime(gameTimer,7200) :
-                        lib.playSound("timer")
+                    # 거탐
+                    if (gsl.imageYolo("lie")):
+                        lie_count += 1
+                        if (lie_count > 1):
+                            lib.playSound("real_detection")
+                            # 서취된 파일 저장
+                            gsl.screenshot("res/detection/{}".format(lib.getTime(True)))
+                    else:
+                        lie_count = 0
+
+                    # 비올레타
+                    if (gsl.imageSearch("res/cctv/violetta.png")):
+                        lib.playSound("violetta")
                         globals.main = False
                         gsl.offHardKey()
+
+                    # 죽음
+                    if (gsl.imageSearch("res/cctv/die.png")):
+                        lib.playSound("die")
+                        globals.main = False
+                        gsl.offHardKey()
+
+                    # 포탈
+                    if (gsl.imageSearch("res/cctv/potal.png")):
+                        globals.game_cctv = True
                         time.sleep(1)
-                        gsl.hardKey(globals.f12)
+                        gsl.offHardKey()
+                        time.sleep(1)
+                        gsl.hardKey(globals.esc)
+                        time.sleep(1)
+                        globals.game_cctv = False
+
+                    # # 타이머
+                    # if gsl.compareTime(gameTimer,7200) :
+                    #     lib.playSound("timer")
+                    #     globals.main = False
+                    #     gsl.offHardKey()
+                    #     time.sleep(1)
+                    #     gsl.hardKey(globals.f12)
+
+                    # 1시간1분마다 채널변경
+                    if gsl.compareTime(serverTimver, 3660) :
+                        globals.game_cctv = True
+                        self.changeServer()
+                        serverTimver = time.time()
 
                     # 미니맵확인
                     getMap = gml.getMinimapSize(True)
@@ -65,39 +104,6 @@ class CCTV(QThread) :
                                 self.findRoon()
                             else:
                                 self.changeServer()
-
-                    # 거탐
-                    if (gsl.imageYolo("lie")):
-                        lie_count += 1
-                        if (lie_count > 0):
-                            lib.playSound("real_detection")
-                            # 서취된 파일 저장
-                            gsl.screenshot("res/detection/{}".format(lib.getTime(True)))
-                    else:
-                        lie_count = 0
-
-                    # 죽음
-                    if (gsl.imageSearch("res/cctv/die.png")):
-                        lib.playSound("die")
-                        globals.main = False
-                        gsl.offHardKey()
-
-                    # 포탈
-                    if (gsl.imageSearch("res/cctv/potal.png")):
-                        globals.game_cctv = True
-                        time.sleep(1)
-                        gsl.offHardKey()
-                        time.sleep(1)
-                        gsl.hardKey(globals.esc)
-                        time.sleep(1)
-                        globals.game_cctv = False
-
-                    # 비올레타
-                    if (gsl.imageSearch("res/cctv/violetta.png")):
-                        lib.playSound("violetta")
-                        globals.main = False
-                        gsl.offHardKey()
-
 
             except Exception as e :
                 print("cctv run()")
@@ -193,6 +199,8 @@ class CCTV(QThread) :
                 globals.game_cctv = False
             else:
                 gsl.hardKey(globals.esc)
+                time.sleep(0.5)
+                gsl.hardKey(globals.esc)
                 time.sleep(1.5)
 
                 self.update_signal.emit(False, "룬을 인식하지 못했습니다")
@@ -205,6 +213,7 @@ class CCTV(QThread) :
         main = True
         roon = time.time()
         while main:
+            time.sleep(0.1)
             try :
                 if not win32api.GetKeyState(globals.mainKey):
                     self.update_signal.emit(False, "룬찾기 사용자 취소")
@@ -213,7 +222,7 @@ class CCTV(QThread) :
                     main = False
                     break
 
-                if (gsl.compareTime(roon, 30)):
+                if (gsl.compareTime(roon, 18)):
                     self.update_signal.emit(False, "30초동안 룬을 못찾음 룬찾기 해제")
                     gsl.offHardKey()
                     main = False
@@ -225,7 +234,7 @@ class CCTV(QThread) :
                     # x축
                     if (abs(위치[0] - 케릭터위치[0]) < 7):
                         gsl.offHardKey()
-                        time.sleep(1)
+                        time.sleep(0.7)
 
                         if (abs(위치[1] - 케릭터위치[1]) < 7):
                             time.sleep(1)
@@ -236,6 +245,7 @@ class CCTV(QThread) :
                         elif (위치[1] < 케릭터위치[1]):
                             # 로프커넥터
                             gsl.hardKey(globals.v)
+                            time.sleep(1)
 
                             # 무빙 위패턴으로 가는법
                             # for item in globals.game_movings:

@@ -13,6 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import games.disassemble
 import games.auction
 import games.hunt
+import games.hunt_assist
 import games.cctv
 import globals
 import db
@@ -129,9 +130,14 @@ class Form(object):
                 self.thread = games.hunt.Hunt()
                 self.thread.update_signal.connect(self.updateSignal)
                 self.thread.start()
-                self.thread2 = games.cctv.CCTV()
+
+                self.thread2 = games.hunt_assist.HuntAssist()
                 self.thread2.update_signal.connect(self.updateSignal)
                 self.thread2.start()
+
+                self.thread3 = games.cctv.CCTV()
+                self.thread3.update_signal.connect(self.updateSignal)
+                self.thread3.start()
 
             elif selected_value == "분해" :
                 # self.thread = test.gml()

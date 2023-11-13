@@ -85,7 +85,7 @@ class HuntAssist(QThread) :
                                 self.changeServer()
 
             except Exception as e :
-                print("cctv run()")
+                print("hunt_assist run()")
                 print(e)
 
     def changeServer(self):
@@ -192,7 +192,7 @@ class HuntAssist(QThread) :
         main = True
         roon = time.time()
         while main:
-            time.sleep(0.1)
+            time.sleep(0.01)
             try :
                 if not win32api.GetKeyState(globals.mainKey):
                     self.update_signal.emit(False, "룬찾기 사용자 취소")

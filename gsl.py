@@ -29,6 +29,28 @@ def arrayTargetDelete(array,field,target) :
             del array[index]
             break
 
+def pixelseSerarch(points, pixcels,diff = 1) :
+    screen = screenshot().load()
+
+    main = True
+    x = points[0]
+    y = points[1]
+
+    result = []
+    while main:
+        if x >= points[2] and y >= points[3]:
+            main = False
+        if screen[x, y] in pixcels:
+            result.append((x, y))
+            x += diff
+            y += diff
+            continue
+        if x == points[2]:
+            y += 1
+            x = points[0]
+        x += 1
+    return result
+
 def pixelSearch(points, pixcels) :
     screen = screenshot().load()
 

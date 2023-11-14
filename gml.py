@@ -89,6 +89,8 @@ def getMinimapSize(Bool = False) :
 
     if Bool :
         obj = {
+            "start_x" : 10,
+            "start_y": 22,
             "end_x": x[0],
             "end_y": y[1],
         }

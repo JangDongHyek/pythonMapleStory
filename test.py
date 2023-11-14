@@ -5,5 +5,13 @@ import db
 import time
 import lib
 import os
+import gsl
+import globals
+import gml
+import init
 
-# os.remove("res/roon/full/20231025 171500.bmp.bmp")
+
+init.Init()
+asd = gml.getMinimapSize(True)
+users = gsl.pixelseSerarch([asd['start_x'],asd['start_y'],asd['end_x'],asd['end_y']], globals.minimap_user,6)
+print(users)

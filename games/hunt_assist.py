@@ -17,6 +17,7 @@ class HuntAssist(QThread) :
         logCount = 0
         gameTimer = time.time()
         serverTimver = time.time()
+
         while globals.main:
             try :
                 if not globals.minimap :
@@ -82,16 +83,21 @@ class HuntAssist(QThread) :
                                 roonTime = time.time()
                                 self.findRoon()
                             else:
+                                serverTimver = time.time()
                                 self.changeServer()
 
             except Exception as e :
-                print("hunt_assist run()")
-                print(e)
+                print(f"hunt_assist run() : {e}")
 
     def checkUser(self):
         users = gsl.pixelseSerarch(globals.minimap, globals.minimap_user, 5)
         if (len(users) >= 2):
             return True
+
+        images = ["res/cctv/userCheck1.png","res/cctv/userCheck2.png"]
+        for image in images :
+            if(gsl.imageSearch(image)) :
+                return True
 
         return False
 
@@ -99,6 +105,7 @@ class HuntAssist(QThread) :
         main = True
         first = True
         gsl.offHardKey()
+
         while main:
             try:
                 if not win32api.GetKeyState(globals.mainKey):
@@ -133,14 +140,10 @@ class HuntAssist(QThread) :
                         time.sleep(1)
                         if (self.checkUser()):
                             self.update_signal.emit(False, "유저 발견 다시 채널이동")
-                        else:
-                            time.sleep(0.5)
-                            if (self.checkUser()):
-                                print("채널이동 더블체크")
-                            else :
-                                self.update_signal.emit(False, "채널이동 완료")
-                                main = False
-                                globals.game_cctv = False
+                        else :
+                            self.update_signal.emit(False, "채널이동 완료")
+                            main = False
+                            globals.game_cctv = False
                 time.sleep(0.5)
             except Exception as e:
                 print("cctv changeServer()")
@@ -215,7 +218,7 @@ class HuntAssist(QThread) :
                     break
 
                 if (gsl.compareTime(roon, 23)):
-                    self.update_signal.emit(False, "30초동안 룬을 못찾음 룬찾기 해제")
+                    self.update_signal.emit(False, "23초동안 룬을 못찾음 룬찾기 해제")
                     gsl.offHardKey()
                     main = False
                     break
@@ -265,5 +268,4 @@ class HuntAssist(QThread) :
                     self.operateRoon()
                     main = False
             except Exception as e :
-                print("cctv findRoon()")
-                print(e)
+                print(f"cctv findRoon() {e}")

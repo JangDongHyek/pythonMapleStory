@@ -1,17 +1,20 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel
-from PyQt5.QtCore import Qt
-import db
-import time
-import lib
-import os
-import gsl
-import globals
-import gml
-import init
+import requests
 
+def get_public_ip():
+    try:
+        # 외부 웹사이트에 GET 요청을 보내서 공인 IP 주소를 가져옵니다.
+        response = requests.get("https://api64.ipify.org?format=json")
 
-init.Init()
-asd = gml.getMinimapSize(True)
-users = gsl.pixelseSerarch([asd['start_x'],asd['start_y'],asd['end_x'],asd['end_y']], globals.minimap_user,6)
-print(users)
+        if response.status_code == 200:
+            public_ip = response.json()["ip"]
+            return public_ip
+        else:
+            print(f"HTTP 요청 실패: 상태 코드 {response.status_code}")
+            return None
+    except Exception as e:
+        print(f"에러 발생: {e}")
+        return None
+
+public_ip = get_public_ip()
+
+print(public_ip)

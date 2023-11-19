@@ -84,8 +84,8 @@ def getMinimapSize(Bool = False) :
             break
 
     if (x == None or y == None):
-        lib.alert("미니맵 크기 확인 불가")
-        return None
+        print("미니맵 크기 확인 불가")
+        return {"start_x" : 10,"start_y": 22,"end_x": 9999,"end_y": 9999,}
 
     if Bool :
         obj = {

@@ -40,5 +40,4 @@ class CCTV(QThread) :
 
 
             except Exception as e :
-                print("cctv run()")
-                print(e)
+                print(f"cctv run() : {e}")

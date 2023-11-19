@@ -114,5 +114,4 @@ class Hunt(QThread) :
                 if isRoom :
                     lib.playSound("special")
                     isRoom = False
-                print("hunt run()")
-                print(e)
+                print(f"hunt run() : {e}")

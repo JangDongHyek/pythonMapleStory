@@ -72,6 +72,7 @@ class Form(object):
         }
         globals.movings = dbu.dictSelect("moves", dict, "", True, "orders", "asc")
 
+
     def setupData(self):
         self.comboBox.addItem("----------------")
 

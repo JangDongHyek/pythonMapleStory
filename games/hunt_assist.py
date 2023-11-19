@@ -88,6 +88,13 @@ class HuntAssist(QThread) :
                 print("hunt_assist run()")
                 print(e)
 
+    def checkUser(self):
+        users = gsl.pixelseSerarch(globals.minimap, globals.minimap_user, 5)
+        if (len(users) >= 2):
+            return True
+
+        return False
+
     def changeServer(self):
         main = True
         first = True
@@ -124,13 +131,16 @@ class HuntAssist(QThread) :
                                 subWhile = False
 
                         time.sleep(1)
-                        user = gsl.pixelSearch(globals.minimap, globals.minimap_user)
-                        if (user):
+                        if (self.checkUser()):
                             self.update_signal.emit(False, "유저 발견 다시 채널이동")
                         else:
-                            self.update_signal.emit(False, "채널이동 완료")
-                            main = False
-                            globals.game_cctv = False
+                            time.sleep(0.5)
+                            if (self.checkUser()):
+                                print("채널이동 더블체크")
+                            else :
+                                self.update_signal.emit(False, "채널이동 완료")
+                                main = False
+                                globals.game_cctv = False
                 time.sleep(0.5)
             except Exception as e:
                 print("cctv changeServer()")
@@ -143,7 +153,7 @@ class HuntAssist(QThread) :
             gsl.hardKey(globals.space)
             time.sleep(0.5)
             imageName = "res/roon/{}.bmp".format(lib.getTime(True))
-            gsl.screenshot(imageName)
+
             if globals.windowMode:
                 x1 = 697
                 x2 = 1237
@@ -155,16 +165,19 @@ class HuntAssist(QThread) :
                 y1 = 170
                 y2 = 350
 
+            gsl.screenshot(imageName,[x1, y1, x2, y2])
+
             time.sleep(0.5)
             roon = gsl.imageYolo("roon", None, [x1, y1, x2, y2])
+            time.sleep(0.5)
             if (len(roon) == 4):
                 for item in roon:
                     gsl.hardKey(eval("globals.{}".format(item["label"])))
                     time.sleep(0.1)
 
-                time.sleep(1.5)
+                time.sleep(1)
 
-                images = ["res/cctv/roon1.png","res/cctv/roon2.png"]
+                images = ["res/cctv/roon1.png","res/cctv/roon2.png","res/cctv/roon3.png"]
                 roonResult = False
                 for image in images :
                     if gsl.imageSearch(image) :
@@ -178,9 +191,9 @@ class HuntAssist(QThread) :
                 globals.game_cctv = False
             else:
                 gsl.hardKey(globals.esc)
-                time.sleep(0.5)
+                time.sleep(1)
                 gsl.hardKey(globals.esc)
-                time.sleep(1.5)
+                time.sleep(1)
 
                 self.update_signal.emit(False, "룬을 인식하지 못했습니다")
                 globals.game_cctv = False
@@ -192,7 +205,7 @@ class HuntAssist(QThread) :
         main = True
         roon = time.time()
         while main:
-            time.sleep(0.01)
+            time.sleep(0.05)
             try :
                 if not win32api.GetKeyState(globals.mainKey):
                     self.update_signal.emit(False, "룬찾기 사용자 취소")
@@ -201,7 +214,7 @@ class HuntAssist(QThread) :
                     main = False
                     break
 
-                if (gsl.compareTime(roon, 18)):
+                if (gsl.compareTime(roon, 23)):
                     self.update_signal.emit(False, "30초동안 룬을 못찾음 룬찾기 해제")
                     gsl.offHardKey()
                     main = False

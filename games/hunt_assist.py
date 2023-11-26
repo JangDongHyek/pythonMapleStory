@@ -61,18 +61,11 @@ class HuntAssist(QThread) :
                         if(getMap['end_x'] > 1000) :
                             continue
                         lib.playSound("map")
-                        print(globals.minimap_attr)
-                        print(getMap)
-                        globals.main = False
-                        gsl.offHardKey()
+                        time.sleep(1)
 
                     if globals.minimap_attr['end_y'] != getMap['end_y'] :
                         lib.playSound("map")
-                        print(globals.minimap_attr)
-                        print(getMap)
-                        globals.main = False
-                        gsl.offHardKey()
-
+                        time.sleep(1)
 
                     # 룬
                     if gsl.compareTime(globals.game_roon_time,900) :

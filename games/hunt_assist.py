@@ -213,6 +213,7 @@ class HuntAssist(QThread) :
                 if (gsl.compareTime(roon, 23)):
                     self.update_signal.emit(False, "23초동안 룬을 못찾음 룬찾기 해제")
                     gsl.offHardKey()
+                    globals.game_cctv = False
                     main = False
                     break
 
